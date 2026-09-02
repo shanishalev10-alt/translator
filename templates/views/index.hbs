@@ -10,12 +10,14 @@
     <h1>Translatron</h1>
     <form>
       <div class="input-line">
-        <input type="text" placeholder="text..." />
-        <button type="button" id="randomize-btn">Randomize</button>
+        <input type="text" placeholder="text..."/>
+        <button type="button" id="randomize-btn" class="translate">Randomize</button>
       </div>
-      <p id="meaning"></p>
-      <button id="meaning-btn">Dictionary meaning</button>
-      <button id="translate-btn">Translate</button>
+      <p id="definition" class="translate data"></p>
+      <p id="partOfSpeech" class="translate data"></p>
+      <p id="synonyms" class="translate data"></p>
+      <button id="meaning-btn" class="translate" type="button">Dictionary meaning</button>
+      <button id="translate-btn" class="translate" type="button">Translate</button>
     </form>
     <p id="error"></p>
   </body>

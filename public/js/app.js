@@ -1,76 +1,87 @@
-console.log("client side js is up");
-
 const input = document.querySelector("input");
+const form = document.querySelector("form");
 const randomizeBtn = document.querySelector("#randomize-btn");
 const translateBtn = document.querySelector("#translate-btn");
 const meaningBtn = document.querySelector("#meaning-btn");
 const errorP = document.querySelector("#error");
 const translationP = document.querySelector("#translation");
-const meaningP = document.querySelector("#meaning");
+const definitionP = document.querySelector("#definition");
+const partOfSpeechP = document.querySelector("#partOfSpeech");
+const synonymsP = document.querySelector("#synonyms");
+const arrToTranslate = document.getElementsByClassName("translate");
+
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+});
 
 //when pressing randomize
-randomizeBtn.addEventListener("click", (event) => {
-  event.preventDefault();
-
+randomizeBtn.addEventListener("click", () => {
   fetch(`http://localhost:3000/randomword`).then((response) => {
-    response.json().then((json) => {
-        console.log(json)
-      if (json.error) {
-        //add error message
-        errorP.textContent = json.error;
-      } else {
-        input.value = json.word;
-        errorP.textContent = "";
-      }
-    });
+    response
+      .json()
+      .then((json) => {
+        if (json.error) {
+          errorP.textContent = json.error;
+        } else {
+          input.value = json.word;
+          errorP.textContent = "";
+        }
+      })
+      .catch((error) => {
+        errorP.textContent = `Something went wrong: ${error.message}`;
+      });
   });
 });
 
 //when pressing the dictionary btn
-meaningBtn.addEventListener("click", (event) => {
-  event.preventDefault();
-
-  meaningBtn.textContent = "Loading meaning...";
-
+meaningBtn.addEventListener("click", () => {
   fetch(`http://localhost:3000/wordmeaning?word=${input.value}`).then(
     (response) => {
-      response.json().then((json) => {
-        if (json.error) {
-          errorP.textContent = json.error;
-        } else {
-          meaningP.textContent = `Definition: ${json.word.entries[0].senses[0].definition} Part of speech: 
-          ${json.word.entries[0].partOfSpeech} Synonyms: ${json.word.entries[0].synonyms.slice(0, 3).join(", ")}`;
-          errorP.textContent = "";
-        }
-        meaningBtn.textContent = "Dictionary meaning";
-      });
+      response
+        .json()
+        .then((json) => {
+          if (json.error) {
+            errorP.textContent = json.error;
+          } else {
+            definitionP.textContent = `Definition: ${json.word.entries[0].senses[0].definition} `;
+            partOfSpeechP.textContent = `Part of speech: ${json.word.entries[0].partOfSpeech}`;
+            synonymsP.textContent = `Synonyms: ${json.word.entries[0].synonyms.slice(0, 3).join(", ")}`;
+            errorP.textContent = "";
+          }
+        })
+        .catch((error) => {
+          errorP.textContent = `Something went wrong: ${error.message}`;
+        });
     },
   );
-
-  console.log("meaning");
 });
 
-// when pressing translate
-translateBtn.addEventListener("click", (event) => {
-  event.preventDefault();
+// when pressing translate btn
+translateBtn.addEventListener("click", () => {
+  if (definitionP.textContent === "") {
+    return (errorP.textContent =
+      "Please first get the meaning of the word, then try again.");
+  }
+  
+  const textToTranslate = Array.from(arrToTranslate)
+    .map((item) => item.textContent)
+    .join("!");
 
-  translateBtn.textContent = "Translating...";
-
-  fetch(`http://localhost:3000/translate?text=${encodeURI(meaningP.textContent)}`).then(
-    (response) => {
+  fetch(`http://localhost:3000/translate?text=${encodeURI(textToTranslate)}`)
+    .then((response) => {
       response.json().then((json) => {
-        console.log(encodeURI(meaningP.textContent))
         if (json.error) {
           errorP.textContent = json.error;
         } else {
-          console.log(json);
           errorP.textContent = "";
-          meaningP.textContent = json.text.text
-        }
-        translateBtn.textContent = "Translate";
-      });
-    },
-  );
 
-  console.log("translating");
+          for (let i = 0; i < arrToTranslate.length; i++) {
+            arrToTranslate[i].textContent = json.text[i].text;
+          }
+        }
+      });
+    })
+    .catch((error) => {
+      errorP.textContent = `Something went wrong: ${error.message}`;
+    });
 });

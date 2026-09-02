@@ -6,7 +6,6 @@ const meaning = (word, callback) => {
   axios
     .get(url)
     .then((response = undefined) => {
-        console.log(response.data.entries)
       if (response.data.entries.length === 0) {
         return callback("Could not find the word.", undefined);
       }

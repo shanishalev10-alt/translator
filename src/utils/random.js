@@ -5,7 +5,7 @@ const randomWord = (callback) => {
 
   axios
     .get(url)
-    .then((response = undefined) => { console.log(response); callback(undefined, response)})
+    .then((response = undefined) => {callback(undefined, response)})
     .catch((error) => {
       if (error.isAxiosError) {
         callback(
@@ -14,7 +14,7 @@ const randomWord = (callback) => {
         );
       } else {
         callback("Something went wrong", undefined);
-      }
+      } 
     });
 };
 

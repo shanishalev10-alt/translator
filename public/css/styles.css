@@ -51,4 +51,8 @@ form {
 #meaning {
     width: 100%;
     text-align: center;
+} 
+
+.data {
+    margin: 0;
 }
